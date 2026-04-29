@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معرض إيفان - نظام ManyChat الذكي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D080;
+    --gold-dark: #9A7A30;
+    --dark: #0D1117;
+    --dark2: #161B22;
+    --dark3: #21262D;
+    --cream: #F5EDD6;
+    --wa: #25D366;
+    --ig: #E1306C;
+    --tg: #0088CC;
+    --tk: #EE1D52;
+    --ms: #0084FF;
+    --white: #ffffff;
+    --text-muted: #8B949E;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0D1117 0%, #1a1200 50%, #0D1117 100%);
+    padding: 60px 20px 40px;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+    color: var(--dark);
+    padding: 6px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Tajawal', sans-serif;
+    font-size: clamp(26px, 5vw, 48px);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .hero p {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto 30px;
+  }
+  .price-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--dark3);
+    border: 1px solid var(--gold-dark);
+    border-radius: 12px;
+    padding: 15px 30px;
+    margin-bottom: 10px;
+  }
+  .price-tag .amount { font-size: 36px; font-weight: 900; color: var(--gold); }
+  .price-tag .period { color: var(--text-muted); font-size: 14px; line-height: 1.4; }
+  .price-tag .annual { font-size: 13px; color: var(--gold-light); background: rgba(201,168,76,0.15); padding: 3px 10px; border-radius: 20px; }
+
+  /* TABS */
+  .tabs-nav {
+    display: flex;
+    overflow-x: auto;
+    background: var(--dark2);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    scrollbar-width: none;
+    gap: 2px;
+    padding: 0 10px;
+  }
+  .tabs-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 14px 18px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.3s;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: var(--white); }
+
+  .tab-pane { display: none; padding: 30px 20px; max-width: 960px; margin: 0 auto; animation: fadeUp 0.4s ease; }
+  .tab-pane.active { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
+
+  /* SECTION HEADINGS */
+  .section-title {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
+  }
+  .card:hover { border-color: rgba(201,168,76,0.4); }
+  .card h3 { color: var(--gold-light); font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .card p, .card li { color: #C9D1D9; font-size: 14px; line-height: 1.8; }
+  .card ul { padding-right: 20px; }
+
+  /* FEATURES GRID */
+  .feat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .feat-card {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 14px;
+    padding: 22px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1), transparent 70%);
+    pointer-events: none;
+  }
+  .feat-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(201,168,76,0.1); }
+  .feat-icon { font-size: 32px; margin-bottom: 12px; }
+  .feat-card h3 { font-size: 15px; color: var(--gold-light); margin-bottom: 8px; }
+  .feat-card p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .feat-tag { display: inline-block; font-size: 11px; background: rgba(201,168,76,0.15); color: var(--gold); padding: 2px 10px; border-radius: 20px; margin-top: 10px; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; background: var(--dark2); border-radius: 12px; overflow: hidden; }
+  .data-table th { background: rgba(201,168,76,0.2); color: var(--gold); padding: 12px 16px; text-align: right; font-size: 14px; border-bottom: 1px solid rgba(201,168,76,0.2); }
+  .data-table td { padding: 12px 16px; text-align: right; font-size: 14px; color: #C9D1D9; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(201,168,76,0.05); }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-gold { background: rgba(201,168,76,0.2); color: var(--gold); }
+  .badge-green { background: rgba(37,211,102,0.2); color: var(--wa); }
+  .badge-blue { background: rgba(0,132,255,0.15); color: #58A6FF; }
+
+  /* ROI BOX */
+  .roi-box {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+    border: 1px solid var(--gold-dark);
+    border-radius: 14px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .roi-box h3 { color: var(--gold); font-size: 18px; margin-bottom: 16px; }
+  .roi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .roi-item { text-align: center; padding: 16px; background: rgba(201,168,76,0.08); border-radius: 10px; }
+  .roi-item .num { font-size: 28px; font-weight: 900; color: var(--gold); font-family: 'Tajawal', sans-serif; }
+  .roi-item .lbl { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* PLATFORM SELECTOR */
+  .platform-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; }
+  .plat-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border: 2px solid transparent;
+    border-radius: 50px; cursor: pointer; font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 700; transition: all 0.25s;
+    background: var(--dark3); color: var(--white);
+  }
+  .plat-btn.active-wa { border-color: var(--wa); color: var(--wa); background: rgba(37,211,102,0.1); }
+  .plat-btn.active-ig { border-color: var(--ig); color: var(--ig); background: rgba(225,48,108,0.1); }
+  .plat-btn.active-tg { border-color: var(--tg); color: var(--tg); background: rgba(0,136,204,0.1); }
+  .plat-btn.active-tk { border-color: var(--tk); color: var(--tk); background: rgba(238,29,82,0.1); }
+  .plat-btn.active-ms { border-color: var(--ms); color: var(--ms); background: rgba(0,132,255,0.1); }
+  .plat-btn:hover { transform: translateY(-2px); }
+
+  /* PHONE MOCKUP */
+  .sim-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+  @media(max-width:700px){ .sim-layout { grid-template-columns: 1fr; } }
+
+  .phone {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    background: #1C1C1E;
+    border-radius: 40px;
+    border: 8px solid #3A3A3C;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.05), 0 25px 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+    height: 580px;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-notch {
+    height: 30px;
+    background: #1C1C1E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phone-notch-bar { width: 80px; height: 5px; background: #3A3A3C; border-radius: 3px; }
+  .chat-head {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .chat-head .avatar { width: 36px; height: 36px; border-radius: 50%; font-size: 20px; display:flex;align-items:center;justify-content:center; }
+  .chat-head .info .name { font-size: 14px; font-weight: 700; }
+  .chat-head .info .status { font-size: 11px; opacity: 0.8; }
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .chat-body::-webkit-scrollbar { width: 4px; }
+  .chat-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+  .bubble {
+    max-width: 80%;
+    padding: 10px 13px;
+    border-radius: 16px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    animation: bubblePop 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  @keyframes bubblePop { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+  .bubble.user { align-self: flex-start; border-bottom-right-radius: 4px; }
+  .bubble.bot { align-self: flex-end; border-bottom-left-radius: 4px; }
+  .typing-dots {
+    align-self: flex-end;
+    padding: 10px 16px;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    display: flex; gap: 5px; align-items: center;
+    display: none;
+  }
+  .typing-dots span {
+    width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.5);
+    animation: typingDot 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingDot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  .chat-foot {
+    padding: 10px 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; gap: 8px;
+  }
+  .sim-input {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 22px;
+    padding: 8px 14px;
+    color: var(--white);
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    outline: none;
+  }
+  .sim-send {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .sim-send:hover { transform: scale(1.1); }
+
+  /* SCENARIO BUTTONS */
+  .scenario-panel { background: var(--dark2); border: 1px solid rgba(201,168,76,0.15); border-radius: 14px; padding: 18px; }
+  .scenario-panel h4 { color: var(--gold); font-size: 14px; margin-bottom: 12px; }
+  .scenario-btn {
+    display: block; width: 100%;
+    background: var(--dark3); border: 1px solid rgba(255,255,255,0.08);
+    color: #C9D1D9; font-family: 'Cairo', sans-serif;
+    font-size: 12.5px; padding: 10px 14px; border-radius: 8px;
+    cursor: pointer; text-align: right; margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .scenario-btn:hover { border-color: var(--gold-dark); color: var(--gold-light); background: rgba(201,168,76,0.05); }
+  .scenario-btn:last-child { margin-bottom: 0; }
+  .lang-note { color: var(--text-muted); font-size: 12px; margin-top: 12px; text-align: center; }
+
+  /* LANG TABS */
+  .lang-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .lang-tab {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.3);
+    background: none; color: var(--text-muted); font-family: 'Cairo', sans-serif;
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+  }
+  .lang-tab.active { background: var(--gold); color: var(--dark); font-weight: 700; border-color: var(--gold); }
+
+  /* ALERT BOX */
+  .alert-gold {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--gold-dark);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.7;
+  }
+  .alert-green { background: rgba(37,211,102,0.08); border-color: rgba(37,211,102,0.3); color: #7EE787; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-right: 30px; }
+  .timeline::before { content: ''; position: absolute; right: 8px; top: 5px; bottom: 5px; width: 2px; background: linear-gradient(to bottom, var(--gold), var(--dark3)); }
+  .tl-item { position: relative; margin-bottom: 22px; }
+  .tl-item::before { content: ''; position: absolute; right: -26px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); box-shadow: 0 0 8px rgba(201,168,76,0.5); }
+  .tl-item h4 { color: var(--gold-light); font-size: 14px; margin-bottom: 4px; }
+  .tl-item p { color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+
+  /* IMAGE DEMO */
+  .img-demo { background: var(--dark2); border: 1px solid rgba(201,168,76,0.15); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .img-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 12px 0; }
+  .img-thumb { background: var(--dark3); border-radius: 8px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 1px solid rgba(201,168,76,0.1); cursor: pointer; transition: all 0.2s; }
+  .img-thumb:hover { border-color: var(--gold); transform: scale(1.05); }
+  .video-thumb { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 8px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; overflow: hidden; border: 1px solid rgba(201,168,76,0.15); transition: all 0.2s; }
+  .video-thumb:hover { border-color: var(--gold); }
+  .play-btn { width: 50px; height: 50px; background: rgba(201,168,76,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--dark); transition: transform 0.2s; }
+  .video-thumb:hover .play-btn { transform: scale(1.1); }
+
+  /* PLAN COMPARE */
+  .plan-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1px; background: rgba(201,168,76,0.1); margin-bottom: 1px; }
+  .plan-cell { background: var(--dark2); padding: 12px 14px; font-size: 13px; }
+  .plan-cell.head { background: var(--dark3); font-weight: 700; color: var(--gold); }
+  .plan-cell.featured { background: rgba(201,168,76,0.08); }
+  .check { color: var(--wa); font-size: 16px; }
+  .cross { color: #F85149; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 13px; border-top: 1px solid rgba(201,168,76,0.1); margin-top: 40px; }
+  .footer strong { color: var(--gold); }
+
+  /* Responsive */
+  @media(max-width:600px){
+    .feat-grid { grid-template-columns: 1fr; }
+    .roi-grid { grid-template-columns: repeat(2,1fr); }
+    .plan-row { grid-template-columns: 2fr 1fr; }
+    .plan-row .plan-cell:last-child { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🏆 نظام الأتمتة الذكي</div>
+  <h1>معرض إيفان للأثاث المنزلي<br>مع ManyChat</h1>
+  <p>نظام الرد الآلي المتكامل — يعمل ٢٤ ساعة، يرسل صور وفيديوهات، ويتحدث بالعربي والكردي والبادينانية</p>
+  <div class="price-tag">
+    <div>
+      <div class="amount">$29</div>
+      <div class="annual">سنوياً $348 فقط</div>
+    </div>
+    <div class="period">شهرياً<br><small style="color:var(--gold-dark)">خطة المحترف</small></div>
+  </div>
+</div>
+
+<!-- TABS NAV -->
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('features', this)">✨ الميزات</button>
+  <button class="tab-btn" onclick="switchTab('demo', this)">🤖 تجربة الروبوت</button>
+  <button class="tab-btn" onclick="switchTab('media', this)">📸 إرسال صور وفيديو</button>
+  <button class="tab-btn" onclick="switchTab('languages', this)">🌐 اللغات</button>
+  <button class="tab-btn" onclick="switchTab('roi', this)">💰 الأرباح والتكلفة</button>
+  <button class="tab-btn" onclick="switchTab('plan', this)">📋 مقارنة الخطط</button>
+  <button class="tab-btn" onclick="switchTab('management', this)">📊 للإدارة</button>
+</div>
+
+<!-- TAB 1: FEATURES -->
+<div id="features" class="tab-pane active">
+  <p class="section-title">⚡ أهم ميزات ManyChat لمعرض إيفان</p>
+
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon">📸</div>
+      <h3>إرسال صور الأثاث تلقائياً</h3>
+      <p>حين يكتب الزبون "غرف نوم" أو "صالون" — يرسل النظام فوراً صور المجموعة مع الأسعار والمواصفات، دون أي تدخل بشري.</p>
+      <span class="feat-tag">🔥 الأهم للمعرض</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎥</div>
+      <h3>إرسال فيديوهات العيوب والميزات</h3>
+      <p>يمكن تعيين فيديو لكل منتج — حين يسأل الزبون يرسل النظام فيديو كامل يوضح الجودة والتفاصيل والعيوب إن وجدت (مفيد جداً للأثاث المستعمل).</p>
+      <span class="feat-tag">💡 مميز للمستعمل</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🌐</div>
+      <h3>ثلاث لغات: عربي + كردي + بادينانية</h3>
+      <p>الروبوت يكتشف لغة الزبون ويرد بنفس اللغة. يمكن برمجته للرد بالكردي الكرمانجي والبادينانية والعربي الموصلي.</p>
+      <span class="feat-tag">✅ قابل للتخصيص</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📱</div>
+      <h3>٥ منصات في شاشة واحدة</h3>
+      <p>واتساب، إنستغرام، ماسنجر، تيك توك، تلجرام — كل الرسائل في مكان واحد. لا تضيع رسالة.</p>
+      <span class="feat-tag">🔗 موحّد</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🕐</div>
+      <h3>يعمل ٢٤ ساعة / ٧ أيام</h3>
+      <p>الساعة ٣ فجراً؟ لا يهم. الروبوت يرد فوراً. الزبون الليلي لا يضيع بعد الآن.</p>
+      <span class="feat-tag">⚡ فوري</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏷️</div>
+      <h3>تحديث المخزون فوري</h3>
+      <p>تم بيع الغرفة؟ تغيير واحد في النظام يخفيها عن كل الزبائن فوراً — لا أحد يسأل عن قطعة مباعة.</p>
+      <span class="feat-tag">📦 مخزون حي</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🛡️</div>
+      <h3>حماية رسمية من الحظر</h3>
+      <p>ربط رسمي مع Meta وWhatsApp Business API — لا يحظر حساب المعرض مهما زاد عدد الرسائل اليومية.</p>
+      <span class="feat-tag">🔒 آمن</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>إحصائيات وتقارير</h3>
+      <p>كم زبون سأل عن غرف النوم؟ كم حجز؟ ما هو أكثر منتج مطلوب؟ كل شيء موثق.</p>
+      <span class="feat-tag">📈 بيانات</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">👨‍💼</div>
+      <h3>تحويل فوري للموظف</h3>
+      <p>حين يريد الزبون التفاوض أو الشراء — يحول الروبوت المحادثة فوراً لعلي أو سرهاد. الموظف يرى كل السياق مسبقاً.</p>
+      <span class="feat-tag">🤝 تنسيق</span>
+    </div>
+  </div>
+
+  <div class="alert-gold">
+    🎯 <strong>أهم ميزة لمعرض إيفان تحديداً:</strong> لأن المعرض يبيع أثاث مستعمل — إرسال فيديو يوضح حالة القطعة بالكامل (العيوب والميزات) يبني ثقة الزبون ويقلل النزاعات بعد البيع. هذه الميزة تميز معرضكم عن كل المنافسين.
+  </div>
+</div>
+
+<!-- TAB 2: DEMO -->
+<div id="demo" class="tab-pane">
+  <p class="section-title">🤖 جرب الروبوت الآن — اختر المنصة والسيناريو</p>
+
+  <div class="platform-bar">
+    <button class="plat-btn active-wa" id="btn-wa" onclick="setPlatform('wa')">📱 واتساب</button>
+    <button class="plat-btn" id="btn-ig" onclick="setPlatform('ig')">📸 إنستغرام</button>
+    <button class="plat-btn" id="btn-tg" onclick="setPlatform('tg')">✈️ تلجرام</button>
+    <button class="plat-btn" id="btn-tk" onclick="setPlatform('tk')">🎵 تيك توك</button>
+    <button class="plat-btn" id="btn-ms" onclick="setPlatform('ms')">💬 ماسنجر</button>
+  </div>
+
+  <div class="sim-layout">
+    <!-- PHONE -->
+    <div class="phone" id="phone-el">
+      <div class="phone-notch"><div class="phone-notch-bar"></div></div>
+      <div class="chat-head" id="chat-head" style="background:#075E54">
+        <div class="avatar" id="chat-avatar">🏠</div>
+        <div class="info">
+          <div class="name" id="chat-name">معرض إيفان - واتساب</div>
+          <div class="status" id="chat-status" style="color:rgba(255,255,255,0.8)">● آنلاين دائماً</div>
+        </div>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div style="text-align:center;color:var(--text-muted);margin:auto;font-size:13px;padding:20px">
+          اختر سيناريو من اليمين لتجربة الرد الآلي 👈
+        </div>
+      </div>
+      <div class="typing-dots" id="typing" style="background:rgba(255,255,255,0.08);margin:0 12px 8px;">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="chat-foot">
+        <input type="text" class="sim-input" id="sim-input" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter') sendCustom()">
+        <button class="sim-send" id="sim-send-btn" onclick="sendCustom()" style="background:var(--wa)">➤</button>
+      </div>
+    </div>
+
+    <!-- SCENARIO PANEL -->
+    <div>
+      <div class="scenario-panel">
+        <h4>📋 اختر سيناريو جاهز</h4>
+        <button class="scenario-btn" onclick="runScenario('bedroom')">🛏️ استفسار عن غرفة نوم مزدوجة</button>
+        <button class="scenario-btn" onclick="runScenario('used')">♻️ سؤال عن أثاث مستعمل + طلب فيديو</button>
+        <button class="scenario-btn" onclick="runScenario('location')">📍 سؤال عن الموقع وأوقات الدوام</button>
+        <button class="scenario-btn" onclick="runScenario('price')">💰 مفاوضة السعر</button>
+        <button class="scenario-btn" onclick="runScenario('kurdish')">🌐 زبون كردي (كرمانجي)</button>
+        <button class="scenario-btn" onclick="runScenario('badinani')">🌐 زبون بادينانية</button>
+        <button class="scenario-btn" onclick="runScenario('night')">🌙 سؤال الساعة 3 فجراً</button>
+        <button class="scenario-btn" onclick="runScenario('handover')">👨‍💼 تحويل للموظف للإغلاق</button>
+        <button class="scenario-btn" onclick="clearChat()">🗑️ مسح المحادثة</button>
+      </div>
+      <p class="lang-note">💡 يمكن أيضاً كتابة رسالتك الخاصة في خانة النص أعلاه</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: MEDIA -->
+<div id="media" class="tab-pane">
+  <p class="section-title">📸 كيف يرسل النظام الصور والفيديوهات؟</p>
+
+  <div class="img-demo">
+    <h3 style="color:var(--gold-light);margin-bottom:10px">🖼️ إرسال صور كتالوج الأثاث</h3>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px">عند كتابة الزبون "غرف نوم" — يرسل النظام فوراً:</p>
+    <div class="img-grid">
+      <div class="img-thumb">🛏️</div>
+      <div class="img-thumb">🛋️</div>
+      <div class="img-thumb">🪑</div>
+      <div class="img-thumb">🚿</div>
+      <div class="img-thumb">🛒</div>
+      <div class="img-thumb">✨</div>
+    </div>
+    <div class="alert-gold" style="margin-top:12px;font-size:13px">
+      ✅ يمكن إرسال حتى <strong>١٠ صور</strong> في رسالة واحدة مع وصف السعر والمواصفات لكل قطعة.
+      <br>✅ الصور منظمة في <strong>كتالوج تفاعلي</strong> — الزبون يضغط على ما يعجبه ويطلب تفاصيل.
+    </div>
+  </div>
+
+  <div class="img-demo">
+    <h3 style="color:var(--gold-light);margin-bottom:10px">🎥 إرسال فيديو حالة الأثاث المستعمل</h3>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px">لكل قطعة مستعملة — فيديو يوضح الحالة الكاملة:</p>
+    <div class="video-thumb" onclick="showVideoAlert()">
+      <div class="play-btn">▶</div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.8">
+        📹 <strong style="color:var(--cream)">ماذا يظهر في الفيديو؟</strong><br>
+        • جولة كاملة حول القطعة من كل الزوايا<br>
+        • تكبير على أي خدش أو عيب صغير (شفافية تامة)<br>
+        • فتح الأدراج والأبواب لإظهار آلية العمل<br>
+        • مقارنة اللون الحقيقي في الإضاءة الطبيعية
+      </div>
+    </div>
+    <div class="alert-gold" style="margin-top:12px;font-size:13px">
+      💡 <strong>لماذا هذا مهم جداً لمعرض إيفان؟</strong><br>
+      الأثاث المستعمل يحتاج ثقة الزبون قبل الشراء. الفيديو يحل مشكلة "ما شفته بالحياة" ويقلل الإلغاءات والشكاوى بعد الاستلام.
+    </div>
+  </div>
+
+  <div class="img-demo">
+    <h3 style="color:var(--gold-light);margin-bottom:10px">📋 إرسال ملف PDF الكتالوج</h3>
+    <p style="color:var(--text-muted);font-size:13px">يمكن إرسال كتالوج PDF احترافي بضغطة زر واحدة من الزبون. مثلاً "أرسل لي الكتالوج الكامل".</p>
+    <div class="alert-green" style="margin-top:12px;font-size:13px">
+      ✅ الكتالوج يُحدَّث في النظام — وكل الزبائن الجدد يحصلون على النسخة المحدثة تلقائياً.
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: LANGUAGES -->
+<div id="languages" class="tab-pane">
+  <p class="section-title">🌐 ثلاث لغات — النظام يتحدث مع كل زبون بلغته</p>
+
+  <div class="alert-gold">
+    🗣️ ManyChat يدعم برمجة ردود بأي لغة. يمكن إعداد ثلاث مجموعات ردود: عربية، كردية كرمانجي، وبادينانية — والروبوت يكتشف اللغة تلقائياً أو يسأل الزبون يختار.
+  </div>
+
+  <div class="lang-tabs">
+    <button class="lang-tab active" id="lt-ar" onclick="showLang('ar')">🇮🇶 العربية الموصلية</button>
+    <button class="lang-tab" id="lt-kr" onclick="showLang('kr')">🟡 الكردية الكرمانجية</button>
+    <button class="lang-tab" id="lt-bd" onclick="showLang('bd')">🟢 البادينانية</button>
+  </div>
+
+  <div id="lang-ar" class="card">
+    <h3>🇮🇶 نموذج رد بالعربي الموصلي</h3>
+    <div style="background:var(--dark3);border-radius:10px;padding:16px;font-size:14px;line-height:2;color:var(--cream)">
+      أهلاً وسهلاً بيك! 🛋️<br>
+      تفضل بيت إيفان للأثاث المنزلي<br><br>
+      شو تحب تشوف؟<br>
+      1️⃣ غرف النوم الجديدة<br>
+      2️⃣ الأثاث المستعمل<br>
+      3️⃣ الصالونات والطقوم<br>
+      4️⃣ التحدث مع موظفنا مباشرة<br><br>
+      📍 موقعنا: [العنوان]<br>
+      ⏰ نفتح من ١٠ صبح حتى ١٠ مسا كل يوم
+    </div>
+  </div>
+
+  <div id="lang-kr" class="card" style="display:none">
+    <h3>🟡 نموذج رد بالكردية الكرمانجية</h3>
+    <div style="background:var(--dark3);border-radius:10px;padding:16px;font-size:14px;line-height:2;color:var(--cream)">
+      Xêr hatî! 🛋️<br>
+      Spas ji bo peywendiya xwe bi Malpera Îvan re<br><br>
+      Tu dixwazî çi bibînî?<br>
+      1️⃣ Jûreyên nû<br>
+      2️⃣ Malzemeyên deste duyem<br>
+      3️⃣ Salonên û komên rûniştinê<br>
+      4️⃣ Bi karmendekî re biaxive<br><br>
+      📍 Cihê me: [navnîşan]<br>
+      ⏰ Ji saet 10 sibê heta 10 şevê vekirî ne
+    </div>
+    <div class="alert-gold" style="margin-top:12px;font-size:12px">
+      ⚠️ ملاحظة: الكردية الكرمانجية تكتب بحروف لاتينية. يجب على الفريق كتابة الردود وإدخالها في النظام.
+    </div>
+  </div>
+
+  <div id="lang-bd" class="card" style="display:none">
+    <h3>🟢 نموذج رد بالبادينانية</h3>
+    <div style="background:var(--dark3);border-radius:10px;padding:16px;font-size:14px;line-height:2;color:var(--cream)">
+      خوش هاتی! 🛋️<br>
+      سپاس لە پەیوەندی کردنەوەت لەگەڵ ئەڤانی<br><br>
+      چی دەتەوێت ببینیت؟<br>
+      1️⃣ ژووری نوێ<br>
+      2️⃣ کالای دەستدووەم<br>
+      3️⃣ سالونەکان<br>
+      4️⃣ قسەکردن لەگەڵ کارمەندەکەمان<br><br>
+      📍 شوێنمان: [ناونیشان]<br>
+      ⏰ لە ١٠ بەیانی تا ١٠ شەو کراوەین
+    </div>
+    <div class="alert-gold" style="margin-top:12px;font-size:12px">
+      ⚠️ البادينانية تكتب بخط سوراني (عربي-كردي). النظام يدعمها بشكل كامل.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 كيف يعرف الروبوت أي لغة يستخدم؟</h3>
+    <div class="timeline" style="margin-top:12px">
+      <div class="tl-item">
+        <h4>الطريقة الأولى: الكشف التلقائي</h4>
+        <p>النظام يقرأ أول رسالة من الزبون ويحدد اللغة تلقائياً</p>
+      </div>
+      <div class="tl-item">
+        <h4>الطريقة الثانية: قائمة الاختيار</h4>
+        <p>الرسالة الترحيبية تسأل الزبون: "اختر لغتك / Zimanê xwe hilbijêre / زمانی خۆت هەڵبژێرە"</p>
+      </div>
+      <div class="tl-item">
+        <h4>الطريقة الثالثة: أزرار اللغة</h4>
+        <p>ثلاثة أزرار تفاعلية في بداية المحادثة — الزبون يضغط على لغته</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: ROI -->
+<div id="roi" class="tab-pane">
+  <p class="section-title">💰 هل تستحق $348 سنوياً؟ — حساب العائد</p>
+
+  <div class="roi-box">
+    <h3>📊 الأرقام الواقعية لمعرض إيفان</h3>
+    <div class="roi-grid">
+      <div class="roi-item"><div class="num">$348</div><div class="lbl">التكلفة السنوية</div></div>
+      <div class="roi-item"><div class="num">$29</div><div class="lbl">شهرياً فقط</div></div>
+      <div class="roi-item"><div class="num">80%</div><div class="lbl">الرسائل يجيب عليها الروبوت</div></div>
+      <div class="roi-item"><div class="num">24/7</div><div class="lbl">يعمل بلا توقف</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧮 حساب بسيط جداً</h3>
+    <p>
+      متوسط ربح بيع غرفة نوم واحدة = <strong style="color:var(--gold)">~$150-300</strong><br><br>
+      إذا نجح الروبوت في إغلاق <strong style="color:var(--gold)">غرفة نوم واحدة فقط</strong> طوال السنة كلها (زبون اتصل الساعة ٣ فجراً وفوزاً برد فوري) — فإن التكلفة مغطاة بالكامل وزيادة.<br><br>
+      <span style="color:var(--wa)">✅ في الواقع: المعارض المماثلة تحقق 5-15 بيعة إضافية شهرياً بسبب سرعة الرد.</span>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>⏰ قيمة وقت الموظفين</h3>
+    <p>
+      علي وسرهاد يقضيان حالياً ساعات يومياً في الرد على:<br>
+      • "بكم هذه؟" — يجيب الروبوت<br>
+      • "أين موقعكم؟" — يجيب الروبوت<br>
+      • "هل مفتوحين؟" — يجيب الروبوت<br>
+      • "أرسل صور الكنب" — يجيب الروبوت<br><br>
+      <strong style="color:var(--gold)">النتيجة:</strong> الموظفون يتحولون من "ماكينات رد" إلى <strong style="color:var(--wa)">"مندوبي مبيعات محترفين"</strong> يركزون فقط على الزبون الجاهز للشراء.
+    </p>
+  </div>
+
+  <div class="alert-green">
+    🏆 <strong>خلاصة:</strong> الاشتراك بـ $348 سنوياً = توظيف موظف خدمة عملاء يعمل ٢٤ ساعة / ٧ أيام / بثلاث لغات / بدون راتب شهري / بدون إجازات / بدون أخطاء بشرية — مقابل <strong>$1 يومياً</strong> فقط.
+  </div>
+</div>
+
+<!-- TAB 6: PLAN COMPARISON -->
+<div id="plan" class="tab-pane">
+  <p class="section-title">📋 مقارنة خطة المحترف مع الخطط الأخرى</p>
+
+  <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(201,168,76,0.2)">
+    <div class="plan-row">
+      <div class="plan-cell head">الميزة</div>
+      <div class="plan-cell head" style="color:#58A6FF">الضروري<br><small style="color:var(--text-muted)">$14/شهر</small></div>
+      <div class="plan-cell head featured" style="color:var(--gold)">⭐ المحترف<br><small style="color:var(--gold-dark)">$29/شهر</small></div>
+    </div>
+    <div class="plan-row"><div class="plan-cell">عدد القنوات</div><div class="plan-cell" style="color:#58A6FF">غير محدودة</div><div class="plan-cell featured"><span class="check">✓</span> 3 قنوات</div></div>
+    <div class="plan-row"><div class="plan-cell">جهات الاتصال/شهر</div><div class="plan-cell">500</div><div class="plan-cell featured"><span class="badge badge-gold">2500</span></div></div>
+    <div class="plan-row"><div class="plan-cell">ذكاء اصطناعي</div><div class="plan-cell"><span class="cross">✗</span></div><div class="plan-cell featured"><span class="check">✓</span></div></div>
+    <div class="plan-row"><div class="plan-cell">إرسال صور وملفات</div><div class="plan-cell"><span class="check">✓</span></div><div class="plan-cell featured"><span class="check">✓</span></div></div>
+    <div class="plan-row"><div class="plan-cell">إرسال فيديو</div><div class="plan-cell"><span class="check">✓</span></div><div class="plan-cell featured"><span class="check">✓</span></div></div>
+    <div class="plan-row"><div class="plan-cell">عدد المستخدمين</div><div class="plan-cell">1</div><div class="plan-cell featured"><span class="badge badge-gold">3 مستخدمين</span></div></div>
+    <div class="plan-row"><div class="plan-cell">تسميات وفلاتر</div><div class="plan-cell"><span class="cross">✗</span></div><div class="plan-cell featured"><span class="check">✓</span></div></div>
+    <div class="plan-row"><div class="plan-cell">دعم البريد الإلكتروني</div><div class="plan-cell"><span class="cross">✗</span></div><div class="plan-cell featured"><span class="check">✓</span></div></div>
+    <div class="plan-row"><div class="plan-cell">بدون علامة Manychat</div><div class="plan-cell"><span class="cross">✗</span></div><div class="plan-cell featured"><span class="check">✓</span></div></div>
+    <div class="plan-row"><div class="plan-cell">الخصم السنوي</div><div class="plan-cell">18%</div><div class="plan-cell featured"><span class="badge badge-gold">25%</span></div></div>
+    <div class="plan-row"><div class="plan-cell"><strong>التكلفة السنوية</strong></div><div class="plan-cell">$168</div><div class="plan-cell featured"><strong style="color:var(--gold)">$348</strong></div></div>
+  </div>
+
+  <div class="alert-gold" style="margin-top:16px">
+    🎯 <strong>توصية:</strong> خطة المحترف ($29/شهر) هي الخيار الأمثل لمعرض إيفان. الخطة الضرورية محدودة جداً (500 جهة اتصال فقط) ولا تتضمن الذكاء الاصطناعي.
+  </div>
+</div>
+
+<!-- TAB 7: MANAGEMENT -->
+<div id="management" class="tab-pane">
+  <p class="section-title">📊 ملخص كامل للإدارة — كل ما تحتاج معرفته</p>
+
+  <div class="card">
+    <h3>🎯 ما هو ManyChat بكلمة واحدة؟</h3>
+    <p>
+      منصة رسمية معتمدة من Meta وTikTok تُمكّن المعرض من إنشاء روبوت ذكي يرد على كل رسائل الزبائن تلقائياً، يرسل الصور والفيديوهات، ويحوّل الزبون الجاهز للشراء إلى الموظف المختص فوراً.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>📋 ملخص الميزات التشغيلية</h3>
+    <table class="data-table" style="margin-top:10px">
+      <tr><th>الميزة</th><th>القيمة للمعرض</th><th>الحالة</th></tr>
+      <tr><td>الرد الآلي على الاستفسارات</td><td>توفير ساعات عمل يومياً</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>إرسال صور الكتالوج</td><td>عرض المنتجات فوراً</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>إرسال فيديو حالة المستعمل</td><td>بناء ثقة الزبون</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>٣ لغات (عربي+كردي+بادينانية)</td><td>خدمة كل شرائح الزبائن</td><td><span class="badge badge-gold">يتطلب إعداد</span></td></tr>
+      <tr><td>٥ منصات موحدة</td><td>لا تضيع رسالة واحدة</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>حماية الحسابات من الحظر</td><td>استمرارية العمل</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>تحديث المخزون الفوري</td><td>منع الإحراج مع الزبائن</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>تقارير وإحصائيات</td><td>قرارات تسويقية ذكية</td><td><span class="badge badge-green">متاح</span></td></tr>
+      <tr><td>تحويل للموظف عند الحاجة</td><td>إغلاق الصفقات</td><td><span class="badge badge-green">متاح</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🗓️ خطة التطبيق (٣ أسابيع)</h3>
+    <div class="timeline" style="margin-top:14px">
+      <div class="tl-item">
+        <h4>الأسبوع الأول: الإعداد والتجربة المجانية (14 يوم)</h4>
+        <p>تسجيل الحساب وربط واتساب وإنستغرام. ضبط الردود الأساسية. رفع صور الكتالوج.</p>
+      </div>
+      <div class="tl-item">
+        <h4>الأسبوع الثاني: إضافة اللغات والفيديوهات</h4>
+        <p>تصوير فيديوهات القطع المستعملة. ترجمة الردود للكردي والبادينانية. اختبار كل السيناريوهات.</p>
+      </div>
+      <div class="tl-item">
+        <h4>الأسبوع الثالث: الانطلاق الكامل والاشتراك</h4>
+        <p>تفعيل الاشتراك السنوي ($348). تدريب علي وسرهاد على لوحة التحكم. متابعة أولى الإحصائيات.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="roi-box">
+    <h3>💡 القرار النهائي للإدارة</h3>
+    <div style="font-size:14px;color:#C9D1D9;line-height:1.9">
+      <p style="margin-bottom:12px">
+        ✅ <strong style="color:var(--gold)">الاستثمار:</strong> $348 سنوياً = $29 شهرياً<br>
+        ✅ <strong style="color:var(--gold)">ما تحصل عليه:</strong> موظف رقمي يعمل ٢٤/٧ بثلاث لغات<br>
+        ✅ <strong style="color:var(--gold)">نقطة التعادل:</strong> بيعة إضافية واحدة فقط طوال السنة<br>
+        ✅ <strong style="color:var(--gold)">التجربة:</strong> ١٤ يوم مجاناً — بدون مخاطرة<br>
+        ✅ <strong style="color:var(--gold)">الأثر على الموظفين:</strong> ترقية من "ردود روتينية" إلى "مبيعات وإغلاق صفقات"
+      </p>
+      <div class="alert-gold">
+        🏆 <strong>التوصية:</strong> الاشتراك في الخطة السنوية ($348) بعد تجربة الـ ١٤ يوم المجانية. العائد المتوقع يتجاوز التكلفة بعشرة أضعاف في السنة الأولى.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  إعداد خاص لـ <strong>معرض إيفان للأثاث المنزلي الجديد والمستعمل</strong><br>
+  نظام ManyChat Pro · $29/شهر · $348/سنة · تجربة مجانية 14 يوماً
+</div>
+
+<script>
+// Tab switching
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// Language tabs
+function showLang(lang) {
+  ['ar','kr','bd'].forEach(l => {
+    document.getElementById('lang-'+l).style.display = l===lang ? 'block' : 'none';
+    document.getElementById('lt-'+l).classList.toggle('active', l===lang);
+  });
+}
+
+// Platform config
+const platforms = {
+  wa:  { name:'معرض إيفان - واتساب',   hbg:'#075E54', bubble:'#25D366', sendbg:'#25D366', avatar:'🏠' },
+  ig:  { name:'معرض إيفان - إنستغرام', hbg:'linear-gradient(135deg,#405DE6,#E1306C)', bubble:'#E1306C', sendbg:'#E1306C', avatar:'📸' },
+  tg:  { name:'معرض إيفان - تلجرام',   hbg:'#0088CC', bubble:'#0099DD', sendbg:'#0088CC', avatar:'✈️' },
+  tk:  { name:'معرض إيفان - تيك توك',  hbg:'#161616', bubble:'#EE1D52', sendbg:'#EE1D52', avatar:'🎵' },
+  ms:  { name:'معرض إيفان - ماسنجر',   hbg:'linear-gradient(135deg,#0084FF,#A033FF)', bubble:'#0084FF', sendbg:'#0084FF', avatar:'💬' }
+};
+let curPlat = 'wa';
+let simBusy = false;
+
+function setPlatform(p) {
+  if(simBusy) return;
+  curPlat = p;
+  const cfg = platforms[p];
+  const head = document.getElementById('chat-head');
+  head.style.background = cfg.hbg;
+  document.getElementById('chat-avatar').textContent = cfg.avatar;
+  document.getElementById('chat-name').textContent = cfg.name;
+  document.getElementById('sim-send-btn').style.background = cfg.bubble;
+  // Update active button
+  ['wa','ig','tg','tk','ms'].forEach(x => {
+    const btn = document.getElementById('btn-'+x);
+    btn.className = 'plat-btn';
+    if(x===p) btn.classList.add('active-'+x);
+  });
+  clearChat();
+}
+
+function clearChat() {
+  document.getElementById('chat-body').innerHTML = '<div style="text-align:center;color:var(--text-muted);margin:auto;font-size:13px;padding:20px">اختر سيناريو لتجربة الرد الآلي 👈</div>';
+}
+
+const scenarios = {
+  bedroom: [
+    {from:'user', text:'السلام عليكم، ممكن أشوف غرف النوم المزدوجة؟ وبكم أسعارها؟'},
+    {from:'bot', text:'وعليكم السلام! أهلاً وسهلاً بيك في معرض إيفان 🛋️\n\nلدينا تشكيلة رائعة من غرف النوم المزدوجة.\nالأسعار تبدأ من $900 وحتى $2800.\n\nاضغط ما يعجبك:\n1️⃣ غرف كلاسيك فخمة\n2️⃣ غرف مودرن عصرية\n3️⃣ غرف مستعملة بحالة ممتازة\n4️⃣ عرض الكتالوج الكامل (PDF)'},
+    {from:'user', text:'2'},
+    {from:'bot', text:'ممتاز! 🛏️ غرف النوم المودرن عندنا:\n\n📦 موديل "رويال مودرن" — $1,200\n📦 موديل "إيليجانس" — $1,450\n📦 موديل "بريميوم" — $1,800\n\n📸 أرسلت لك صور الموديلات الثلاث.\n\nتريد تحجز موعد للمشاهدة على الطبيعة؟ 😊'},
+    {from:'user', text:'ابعتلي الصور'},
+    {from:'bot', text:'تفضل! 📸📸📸\n[صورة 1: موديل رويال]\n[صورة 2: موديل إيليجانس]\n[صورة 3: موديل بريميوم]\n\nكل الصور بجودة عالية. أي موديل يعجبك أكثر؟'},
+  ],
+  used: [
+    {from:'user', text:'عندكم أثاث مستعمل؟ بدي صالون بحالة كويسة'},
+    {from:'bot', text:'أهلاً بيك! ✅ نعم عندنا قسم خاص للأثاث المستعمل بحالات ممتازة.\n\nالصالونات المتوفرة الآن:\n🛋️ طقم 7 قطع دمشقي — $450 (حالة 9/10)\n🛋️ طقم 5 قطع مودرن — $320 (حالة 8/10)\n🛋️ طقم كنب إيطالي — $580 (حالة 9.5/10)\n\nتريد أشوفلك فيديو لأي واحد منهم؟'},
+    {from:'user', text:'ابعتلي فيديو الطقم الإيطالي'},
+    {from:'bot', text:'تفضل! 🎥 فيديو كامل لطقم الكنب الإيطالي:\n\n[🎬 فيديو - جولة 360° حول الطقم]\n• الوقت: 2 دقيقة\n• يظهر: الحالة الكاملة، الخدوش إن وجدت، جودة النسيج، الألوان الحقيقية\n\nعندك أي سؤال بعد الفيديو؟'},
+    {from:'user', text:'ممتاز، بكم يصبح لو اشتريت طقمين؟'},
+    {from:'bot', text:'سؤال ممتاز! 💰 للمبالغ الكبيرة نحتاج نوصلك بمدير المبيعات.\n\n⏳ جاري تحويلك لعلي الآن...\n\n[تم تحويل المحادثة لعلي - مندوب المبيعات]'},
+  ],
+  location: [
+    {from:'user', text:'وين موقعكم؟ ومفتوحين اليوم؟'},
+    {from:'bot', text:'أهلاً بيك! 📍\n\nموقعنا: [اسم الشارع والمنطقة - الموصل]\n\n⏰ أوقات العمل:\nالأحد - الخميس: 10 ص — 10 م\nالجمعة: 4 م — 10 م\nالسبت: 10 ص — 10 م\n\n✅ نعم، مفتوحون الآن ونسعد بزيارتك!\n\n📌 [اضغط هنا للخريطة]\n🚗 تحتاج مساعدة للوصول؟'},
+  ],
+  price: [
+    {from:'user', text:'بكم غرفة النوم رويال؟ غالية شوي'},
+    {from:'bot', text:'أفهم وجهة نظرك! 😊\nسعر موديل رويال: $1,200\n\nبس خلينا نقول لك ليش يستحق:\n✅ خشب صلب عالي الجودة\n✅ ضمان سنتين\n✅ توصيل مجاني داخل الموصل\n✅ تركيب مجاني\n\nبتحب أتكلم مع موظفنا علي عن إمكانية تقسيط؟ 😊'},
+    {from:'user', text:'إيه بدي أحكي معه'},
+    {from:'bot', text:'ممتاز! 🤝\nجاري تحويلك لعلي الآن...\n\nعلي - سيتصل بيك خلال دقائق.\nمتطلعين للتعامل معك! 😊'},
+  ],
+  kurdish: [
+    {from:'user', text:'سڵاو، من دەمەوێ دەربارەی ژووری نوێ زانیاری وەربگرم'},
+    {from:'bot', text:'سڵاوت لێ بێت! خوش هاتی بۆ ئەڤانی 🛋️\n\nبەڵێ، ژووری نوێمان هەیە.\nنرخەکان لە $900 دەستپێدەکات.\n\nچی دەتەوێت ببینیت؟\n1️⃣ ژووری کلاسیک\n2️⃣ ژووری مۆدێرن\n3️⃣ کالای دەستدووەم\n4️⃣ قسەکردن لەگەڵ کارمەند'},
+  ],
+  badinani: [
+    {from:'user', text:'خوش هاتی، من دوچوومی ژووری کونا تازه'},
+    {from:'bot', text:'خوش هاتی! 🛋️\nسپاس لە پەیوەندیکردنت لەگەڵ ئەڤانی\n\nبەڵێ، ژووری کوناتازەمان هەیە بە نرخی گونجاو.\nنرخ لە $900 دەستپێدەکات.\n\nچی دەتەوێت ببینیت؟\n1️⃣ ژووری کلاسیک\n2️⃣ ژووری مۆدێرن\n3️⃣ قسەکردن لەگەڵ کارمەند'},
+  ],
+  night: [
+    {from:'user', text:'مرحبا (الساعة 3:17 فجراً) — بدي أعرف سعر غرفة نوم'},
+    {from:'bot', text:'أهلاً وسهلاً! 😊 (نعمل ٢٤ ساعة — حتى الساعة ٣ فجراً!)\n\nغرف النوم عندنا تبدأ من $900 للجديد وتنزل للمستعمل.\n\n📸 تريد أرسلك الكتالوج الآن؟\n\nأو بكرة الصبح موظفنا علي يتصل بيك في أي وقت تحدده. ✅'},
+    {from:'user', text:'إيه ابعتلي الكتالوج'},
+    {from:'bot', text:'تفضل! 📄\n[كتالوج معرض إيفان الكامل.pdf]\n\nفي 32 صفحة تشمل كل قسم عندنا.\nخذ وقتك وإذا عجبك شي راسلنا نحجزه! 😊\n\nصباح الخير المبكر! ✨'},
+  ],
+  handover: [
+    {from:'user', text:'بدي أشتري غرفة نوم وممكن أنزل اليوم'},
+    {from:'bot', text:'ممتاز جداً! 🎉 نسعد بزيارتك!\n\nالمعرض مفتوح حتى الساعة ١٠ مساءً.\n\nباش نخلي زيارتك مميزة — أيش الموديل اللي شفته وعجبك؟ حتى نجهزه لك قبل ما تجي!'},
+    {from:'user', text:'موديل بريميوم المودرن'},
+    {from:'bot', text:'ممتاز اختيار! ✅\n\nجاري تحضير موديل بريميوم المودرن لك وإعلام الفريق.\n\n📞 سرهاد - مدير المبيعات سيتصل بك الآن لتأكيد الموعد وأي تفاصيل إضافية!\n\n[تم تحويل المحادثة — سرهاد يستلم الآن]'},
+  ]
+};
+
+function addBubble(from, text) {
+  const body = document.getElementById('chat-body');
+  // Clear placeholder
+  const placeholder = body.querySelector('div[style*="margin:auto"]');
+  if(placeholder) placeholder.remove();
+
+  const d = document.createElement('div');
+  d.className = 'bubble ' + from;
+  d.textContent = text;
+  const cfg = platforms[curPlat];
+  if(from==='bot') d.style.background = cfg.bubble + '33';
+  else d.style.background = 'rgba(255,255,255,0.08)';
+  body.appendChild(d);
+  body.scrollTop = body.scrollHeight;
+}
+
+async function runScenario(key) {
+  if(simBusy) return;
+  simBusy = true;
+  clearChat();
+  const msgs = scenarios[key];
+  const typing = document.getElementById('typing');
+  typing.style.background = platforms[curPlat].bubble + '33';
+  for(const msg of msgs) {
+    await sleep(msg.from==='bot' ? 500 : 700);
+    if(msg.from==='bot') {
+      typing.style.display = 'flex';
+      document.getElementById('chat-body').scrollTop = 99999;
+      await sleep(1400);
+      typing.style.display = 'none';
+    }
+    addBubble(msg.from, msg.text);
+    await sleep(300);
+  }
+  simBusy = false;
+}
+
+async function sendCustom() {
+  if(simBusy) return;
+  const inp = document.getElementById('sim-input');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  inp.value = '';
+  simBusy = true;
+  addBubble('user', txt);
+  const typing = document.getElementById('typing');
+  typing.style.background = platforms[curPlat].bubble + '33';
+  typing.style.display = 'flex';
+  document.getElementById('chat-body').scrollTop = 99999;
+  await sleep(1600);
+  typing.style.display = 'none';
+
+  // Simple keyword responses
+  let reply = 'شكراً لرسالتك! 😊\nسيتم معالجة طلبك وإرسال المعلومات المناسبة فوراً.\n\nهل تريد التحدث مع أحد موظفينا مباشرة؟';
+  const lower = txt.toLowerCase();
+  if(/غرف|نوم|bedroom/i.test(txt)) reply = 'غرف النوم تبدأ من $900.\n\n1️⃣ كلاسيك\n2️⃣ مودرن\n3️⃣ مستعمل\n\nأي قسم يهمك؟';
+  else if(/صالون|كنب|salon/i.test(txt)) reply = 'الصالونات والكنب متوفرة!\n\n🛋️ جديد: $600-$1500\n🛋️ مستعمل: $200-$600\n\nتريد صور أو فيديو؟';
+  else if(/سعر|بكم|price/i.test(txt)) reply = 'الأسعار تختلف حسب القسم:\n💰 غرف نوم: $900-$2800\n💰 صالونات: $300-$1500\n💰 مستعمل: يبدأ من $150\n\nأي قسم يهمك؟';
+  else if(/موقع|عنوان|location/i.test(txt)) reply = '📍 الموقع: [اسم الشارع - الموصل]\n⏰ نفتح 10 ص — 10 م يومياً\n\n[اضغط للخريطة]';
+  else if(/فيديو|video/i.test(txt)) reply = '🎥 أرسل لك فيديو القطعة المطلوبة:\n[فيديو جودة عالية يوضح الحالة الكاملة]\n\nأي قطعة تريد فيديوها؟';
+  else if(/صور|صورة|photo/i.test(txt)) reply = '📸 إليك الصور:\n[صورة 1]\n[صورة 2]\n[صورة 3]\n\nعجبك شي منها؟';
+  else if(/خوش|سڵاو|باش/i.test(txt)) reply = 'خوش هاتی! 😊\nئەڤانی بۆ خزمەتت.\n\nچی دەتەوێت ببینیت؟\n1️⃣ ژووری نوێ\n2️⃣ کالای دەستدووەم\n3️⃣ قسەکردن لەگەڵ کارمەند';
+
+  addBubble('bot', reply);
+  simBusy = false;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r,ms)); }
+
+function showVideoAlert() {
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center';
+  d.innerHTML = '<div style="background:#21262D;border:1px solid #C9A84C;border-radius:16px;padding:30px;max-width:340px;text-align:center;font-family:Cairo,sans-serif"><div style="font-size:60px;margin-bottom:16px">🎥</div><h3 style="color:#C9A84C;margin-bottom:12px">هذا مثال على الفيديو</h3><p style="color:#C9D1D9;font-size:14px;line-height:1.7;margin-bottom:20px">في النظام الحقيقي، يرسل الروبوت فيديو حقيقي مسجل مسبقاً للقطعة — يوضح حالتها الكاملة، عيوبها، وميزاتها.</p><button onclick="this.closest(\'div[style]\').remove()" style="background:#C9A84C;color:#0D1117;border:none;padding:10px 24px;border-radius:8px;font-family:Cairo,sans-serif;font-weight:700;cursor:pointer;font-size:14px">حسناً، فهمت</button></div>';
+  document.body.appendChild(d);
+}
+</script>
+</body>
+</html>
